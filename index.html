@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biology 20: Unit B Review</title>
+    <title>B20 UB Ch.4,5 Review</title>
     <style>
         :root {
             --primary: #4f46e5; /* Modern Indigo */
@@ -16,28 +16,44 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             display: flex;
             justify-content: center;
-            padding: 20px;
+            padding: 40px 20px;
             line-height: 1.6;
+            margin: 0;
         }
 
         #quiz-container {
             background: var(--card-bg);
-            max-width: 700px;
+            max-width: 800px;
             width: 100%;
             padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--bg);
+            padding-bottom: 20px;
+        }
+
+        .main-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--text);
+            margin: 0;
+            letter-spacing: -0.025em;
         }
 
         .progress-bar {
-            height: 8px;
+            height: 10px;
             background: var(--accent);
-            border-radius: 4px;
+            border-radius: 10px;
             margin-bottom: 30px;
             overflow: hidden;
         }
@@ -46,65 +62,97 @@
             height: 100%;
             background: var(--primary);
             width: 0%;
-            transition: width 0.4s ease;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        h2 { margin-top: 0; font-weight: 700; }
+        #question-text {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
 
         .option-btn {
             display: block;
             width: 100%;
-            padding: 15px;
-            margin: 10px 0;
+            padding: 16px 20px;
+            margin: 12px 0;
             border: 2px solid var(--accent);
-            border-radius: 8px;
+            border-radius: 12px;
             background: white;
             cursor: pointer;
             text-align: left;
-            font-size: 1rem;
-            transition: all 0.2s;
+            font-size: 1.05rem;
+            transition: all 0.2s ease;
             color: var(--text);
+            font-weight: 500;
         }
 
         .option-btn:hover:not([disabled]) {
             border-color: var(--primary);
             background: var(--bg);
+            transform: translateY(-1px);
         }
 
-        .correct { background: #dcfce7 !important; border-color: var(--success) !important; }
-        .wrong { background: #fee2e2 !important; border-color: var(--error) !important; }
+        .option-btn:disabled { cursor: default; }
+
+        .correct { background: #dcfce7 !important; border-color: var(--success) !important; color: #166534; }
+        .wrong { background: #fee2e2 !important; border-color: var(--error) !important; color: #991b1b; }
 
         #feedback {
             margin-top: 20px;
-            padding: 15px;
-            border-radius: 8px;
+            padding: 15px 20px;
+            border-radius: 12px;
             display: none;
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 1.1rem;
         }
 
         #next-btn {
-            margin-top: 20px;
+            margin-top: 25px;
             background: var(--primary);
             color: white;
             border: none;
-            padding: 12px 30px;
-            border-radius: 8px;
+            padding: 14px 35px;
+            border-radius: 10px;
             cursor: pointer;
             display: none;
-            font-weight: bold;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: opacity 0.2s;
         }
 
-        #results { display: none; }
-        .mistake-list { color: var(--error); margin-left: 20px; }
+        #next-btn:hover { opacity: 0.9; }
+
+        #results { display: none; text-align: center; }
+        .mistake-list { 
+            text-align: left; 
+            color: var(--text); 
+            background: var(--bg); 
+            padding: 20px 40px; 
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 15px;
+        }
+        
+        .score-display {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
 
 <div id="quiz-container">
+    <div class="header-section">
+        <h1 class="main-title">B20 UB Ch.4,5 Ecosystems and Population Change Review</h1>
+    </div>
+
     <div class="progress-bar"><div id="progress-fill"></div></div>
     
     <div id="question-view">
-        <h2 id="question-text">Loading Question...</h2>
+        <div id="question-text">Loading...</div>
         <div id="options"></div>
         <div id="feedback"></div>
         <button id="next-btn">Next Question →</button>
@@ -112,41 +160,42 @@
 
     <div id="results">
         <h2>Review Complete!</h2>
-        <p style="font-size: 1.5rem;">Your Score: <span id="score-val"></span> / 25</p>
-        <hr>
-        <h3>Focus Areas (Common Mistakes):</h3>
+        <div class="score-display"><span id="score-val"></span>/25</div>
+        <p>Great effort! Below are the areas you should focus on based on your answers:</p>
         <ul id="mistake-analysis" class="mistake-list"></ul>
-        <button onclick="location.reload()" id="next-btn" style="display:block">Restart Quiz</button>
+        <div style="margin-top: 30px;">
+            <button onclick="location.reload()" id="next-btn" style="display:inline-block">Restart Quiz</button>
+        </div>
     </div>
 </div>
 
 <script>
     const quizData = [
-        { q: "Which level includes both living community and physical environment?", a: ["Ecosystem", "Population", "Community", "Species"], correct: 0, category: "Organization" },
-        { q: "Soil pH and precipitation are categorized as:", a: ["Abiotic", "Biotic", "Niche", "Trophic"], correct: 0, category: "Ecosystem Factors" },
-        { q: "In 'Canis lupus', 'Canis' represents the:", a: ["Genus", "Species", "Family", "Order"], correct: 0, category: "Taxonomy" },
-        { q: "An organism's ecological niche is best defined as:", a: ["Its address", "Its role/profession", "Its population size", "Its trophic level"], correct: 1, category: "Niches" },
-        { q: "Which is a biotic limiting factor for trout?", a: ["Low Oxygen", "Invasive Predator", "Water Speed", "Turbidity"], correct: 1, category: "Ecosystem Factors" },
-        { q: "Essential for natural selection to occur:", a: ["Stable environment", "Genetic variation", "Lack of competition", "Infinite resources"], correct: 1, category: "Evolution" },
-        { q: "Fossil record shows evidence of:", a: ["No change", "Sudden appearance", "Chronological progression", "No impact"], correct: 2, category: "Evolution" },
-        { q: "Which is a structural adaptation?", a: ["Hibernation", "Sharp talons", "Migration", "Ink release"], correct: 1, category: "Adaptations" },
-        { q: "Biogeography refers to:", a: ["Chemistry", "Geographic distribution", "Biomass", "Taxonomy"], correct: 1, category: "Taxonomy" },
-        { q: "Biological 'fitness' refers to:", a: ["Strength", "Survival & Reproduction", "Lifespan", "DNA choice"], correct: 1, category: "Evolution" },
-        { q: "Which is an adaptation from selection?", a: ["Learning", "Waxy coating over generations", "Muscle growth", "Winter fur color shift"], correct: 1, category: "Adaptations" },
-        { q: "Which abiotic factor is most stable in water?", a: ["Temperature", "Light", "Oxygen", "Nutrients"], correct: 0, category: "Ecosystem Factors" },
-        { q: "Vestigial structures suggest:", a: ["Vital functions", "Complexity", "Common ancestry", "Single mutations"], correct: 2, category: "Evolution" },
-        { q: "High richness but low population size describes:", a: ["Climax community", "Pioneer community", "Monoculture", "Desert"], correct: 0, category: "Community Dynamics" },
-        { q: "Lamarck failed to account for:", a: ["Environment", "Genetic inheritance", "Struggle", "Extinction"], correct: 1, category: "Evolution" },
-        { q: "Example of physiological adaptation:", a: ["Long neck", "Concentrated urine", "Hollow bones", "Web spinning"], correct: 1, category: "Adaptations" },
-        { q: "Difference between population and community:", a: ["Abiotic factors", "One species vs multiple", "Community is one species", "No difference"], correct: 1, category: "Organization" },
-        { q: "Fossil record with long stasis followed by sudden change is:", a: ["Punctuated Equilibrium", "Gradualism", "Lamarckism", "Artificial Selection"], correct: 0, category: "Evolution" },
-        { q: "Sewage dump impact on water:", a: ["BOD up, Oxygen down", "BOD down, Oxygen up", "Both up", "Both down"], correct: 0, category: "Water Quality" },
-        { q: "Highest number of common characteristics is in the same:", a: ["Species", "Genus", "Family", "Order"], correct: 0, category: "Taxonomy" },
-        { q: "Primary sources of variation:", a: ["Mutation/Sexual reproduction", "Asexual/Mitosis", "Exercise/Diet", "Learning"], correct: 0, category: "Evolution" },
-        { q: "Coexisting by eating at different times reduces:", a: ["Predation", "Niche overlap", "Success", "Stability"], correct: 1, category: "Niches" },
-        { q: "Comparative embryology shows:", a: ["Adults look same", "Similar development stages", "No selection", "Trait choice"], correct: 1, category: "Evolution" },
-        { q: "Abiotic difference in benthic vs limnetic zone:", a: ["Light", "Fish", "Decomposers", "Plants"], correct: 0, category: "Ecosystem Factors" },
-        { q: "Squirrels separated by a canyon becoming two species:", a: ["Allopatric speciation", "Sympatric speciation", "Artificial selection", "Vestigial evolution"], correct: 0, category: "Evolution" }
+        { q: "Which of the following levels of organization includes both the living community and the physical environment in a defined area?", a: ["Ecosystem", "Population", "Community", "Species"], correct: 0, category: "Biological Organization" },
+        { q: "Soil pH, annual precipitation, and dissolved oxygen levels are categorized as:", a: ["Abiotic characteristics", "Biotic characteristics", "Niche parameters", "Trophic levels"], correct: 0, category: "Abiotic Factors" },
+        { q: "In the scientific name 'Canis lupus', 'Canis' represents the _________ and 'lupus' represents the _________.", a: ["Genus; Species", "Family; Genus", "Species; Genus", "Class; Order"], correct: 0, category: "Binomial Nomenclature" },
+        { q: "Which of the following is the most accurate definition of an organism's ecological niche?", a: ["Physical location only", "The role/role interactions within its ecosystem", "Total number of individuals", "Position in food web only"], correct: 1, category: "Ecological Niches" },
+        { q: "Which of the following would be considered a biotic limiting factor for a population of trout?", a: ["Low dissolved oxygen", "Presence of a predatory invasive species", "Rapid water velocity", "High water turbidity"], correct: 1, category: "Limiting Factors" },
+        { q: "Which of the following is essential for the process of natural selection to occur?", a: ["Stable environment", "Genetic variation among individuals", "Lack of competition", "Infinite resources"], correct: 1, category: "Natural Selection" },
+        { q: "The fossil record provides evidence for evolution by showing:", a: ["No change over time", "Sudden appearance without extinction", "Chronological progression from simple to complex", "No environmental impact"], correct: 2, category: "Evolutionary Evidence" },
+        { q: "Which of the following is a structural adaptation?", a: ["Hibernation", "The sharp talons of a hawk", "Migration", "Releasing ink"], correct: 1, category: "Adaptations" },
+        { q: "In the context of population change, what does 'biogeography' refer to?", a: ["Chemical composition", "Geographic distribution of species", "Biomass measurement", "Taxonomy"], correct: 1, category: "Biogeography" },
+        { q: "In biological terms, 'fitness' refers to:", a: ["Physical strength", "Survival and production of viable offspring", "Lifespan", "Ability to change DNA"], correct: 1, category: "Evolutionary Fitness" },
+        { q: "Which statement describes an 'adaptation' resulting from natural selection?", a: ["Learning a behavior", "Waxy coating developed over generations", "Building muscle", "Hormonal color change"], correct: 1, category: "Adaptations" },
+        { q: "Which abiotic factor is typically more stable in aquatic environments compared to land?", a: ["Temperature", "Light availability", "Oxygen concentration", "Nutrient levels"], correct: 0, category: "Aquatic Ecosystems" },
+        { q: "Vestigial structures, such as the pelvic bone in whales, are evidence because they:", a: ["Perform vital functions", "Suggest complexity", "Indicate descent from an ancestor", "Result from one mutation"], correct: 2, category: "Evolutionary Evidence" },
+        { q: "High species richness but low population sizes for each species describes a:", a: ["Climax community", "Pioneer community", "Monoculture", "Desert ecosystem"], correct: 0, category: "Succession" },
+        { q: "Lamarck's theory was replaced because he failed to account for:", a: ["Environmental pressure", "Genetic traits in gametes being inherited", "Struggle for survival", "Extinction"], correct: 1, category: "Evolutionary History" },
+        { q: "Which of the following is a physiological adaptation?", a: ["Long neck", "Concentrated urine to conserve water", "Hollow bones", "Spinning a web"], correct: 1, category: "Adaptations" },
+        { q: "What is the primary difference between a 'population' and a 'community'?", a: ["Abiotic factors", "One species vs. multiple species", "Community is one species", "Interchangeable terms"], correct: 1, category: "Biological Organization" },
+        { q: "Long periods with little change followed by sudden appearance of new species is:", a: ["Punctuated Equilibrium", "Gradualism", "Lamarckism", "Artificial Selection"], correct: 0, category: "Rates of Evolution" },
+        { q: "If raw sewage is dumped into a river, how do BOD and dissolved oxygen change?", a: ["BOD increases; Oxygen decreases", "BOD decreases; Oxygen increases", "Both increase", "Both decrease"], correct: 0, category: "Water Quality (BOD)" },
+        { q: "Which group contains the highest number of common characteristics shared between members?", a: ["Species", "Genus", "Family", "Order"], correct: 0, category: "Taxonomy" },
+        { q: "Variation mentioned in natural selection comes primarily from:", a: ["Mutation and sexual reproduction", "Asexual reproduction", "Exercise and diet", "Acquired traits"], correct: 0, category: "Natural Selection" },
+        { q: "Eating insects at different times (day vs. night) reduces:", a: ["Predation", "Niche overlap", "Reproductive success", "Abiotic stability"], correct: 1, category: "Ecological Niches" },
+        { q: "Comparative embryology supports evolution because:", a: ["Adults look same", "Closely related species show similar development", "No selection", "Embryos choose traits"], correct: 1, category: "Evolutionary Evidence" },
+        { q: "Abiotic factor distinguishing benthic from limnetic zones:", a: ["Amount of light", "Fish species", "Decomposers", "Aquatic plants"], correct: 0, category: "Aquatic Ecosystems" },
+        { q: "Squirrels split by a canyon developing into two species is:", a: ["Allopatric speciation", "Sympatric speciation", "Artificial selection", "Vestigial evolution"], correct: 0, category: "Speciation" }
     ];
 
     let currentQ = 0;
@@ -165,7 +214,7 @@
         optionsBox.innerHTML = '';
         feedbackBox.style.display = 'none';
         nextBtn.style.display = 'none';
-        progressFill.style.width = `${(currentQ / 25) * 100}%`;
+        progressFill.style.width = `${(currentQ / quizData.length) * 100}%`;
 
         data.a.forEach((opt, index) => {
             const btn = document.createElement('button');
@@ -179,19 +228,18 @@
     function checkAnswer(selected) {
         const data = quizData[currentQ];
         const buttons = document.querySelectorAll('.option-btn');
-        
         buttons.forEach(b => b.disabled = true);
 
         if (selected === data.correct) {
             buttons[selected].classList.add('correct');
-            feedbackBox.innerText = "Correct!";
-            feedbackBox.style.color = "var(--success)";
+            feedbackBox.innerText = "✓ Correct!";
+            feedbackBox.style.color = "#166534";
             score++;
         } else {
             buttons[selected].classList.add('wrong');
             buttons[data.correct].classList.add('correct');
-            feedbackBox.innerText = "Incorrect.";
-            feedbackBox.style.color = "var(--error)";
+            feedbackBox.innerText = "✗ Incorrect.";
+            feedbackBox.style.color = "#991b1b";
             mistakes.push(data.category);
         }
 
@@ -218,12 +266,11 @@
         const uniqueMistakes = [...new Set(mistakes)];
         
         if (uniqueMistakes.length === 0) {
-            analysis.innerHTML = "<li>Perfect score! No specific weak areas identified.</li>";
-            analysis.style.color = "var(--success)";
+            analysis.innerHTML = "<li><strong>Perfect!</strong> You have a strong grasp of all concepts.</li>";
         } else {
             uniqueMistakes.forEach(m => {
                 const li = document.createElement('li');
-                li.innerText = `Review the concepts of: ${m}`;
+                li.innerHTML = `Review <strong>${m}</strong>`;
                 analysis.appendChild(li);
             });
         }
