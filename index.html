@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology 20: Unit B Review</title>
+    <style>
+        :root {
+            --primary: #4f46e5; /* Modern Indigo */
+            --bg: #f8fafc;      /* Soft Slate Blue/Gray bg */
+            --card-bg: #ffffff;
+            --text: #000000;    /* Requested Black text */
+            --success: #22c55e;
+            --error: #ef4444;
+            --accent: #e0e7ff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        #quiz-container {
+            background: var(--card-bg);
+            max-width: 700px;
+            width: 100%;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--accent);
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        #progress-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        h2 { margin-top: 0; font-weight: 700; }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1rem;
+            transition: all 0.2s;
+            color: var(--text);
+        }
+
+        .option-btn:hover:not([disabled]) {
+            border-color: var(--primary);
+            background: var(--bg);
+        }
+
+        .correct { background: #dcfce7 !important; border-color: var(--success) !important; }
+        .wrong { background: #fee2e2 !important; border-color: var(--error) !important; }
+
+        #feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            font-weight: 500;
+        }
+
+        #next-btn {
+            margin-top: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: none;
+            font-weight: bold;
+        }
+
+        #results { display: none; }
+        .mistake-list { color: var(--error); margin-left: 20px; }
+    </style>
+</head>
+<body>
+
+<div id="quiz-container">
+    <div class="progress-bar"><div id="progress-fill"></div></div>
+    
+    <div id="question-view">
+        <h2 id="question-text">Loading Question...</h2>
+        <div id="options"></div>
+        <div id="feedback"></div>
+        <button id="next-btn">Next Question →</button>
+    </div>
+
+    <div id="results">
+        <h2>Review Complete!</h2>
+        <p style="font-size: 1.5rem;">Your Score: <span id="score-val"></span> / 25</p>
+        <hr>
+        <h3>Focus Areas (Common Mistakes):</h3>
+        <ul id="mistake-analysis" class="mistake-list"></ul>
+        <button onclick="location.reload()" id="next-btn" style="display:block">Restart Quiz</button>
+    </div>
+</div>
+
+<script>
+    const quizData = [
+        { q: "Which level includes both living community and physical environment?", a: ["Ecosystem", "Population", "Community", "Species"], correct: 0, category: "Organization" },
+        { q: "Soil pH and precipitation are categorized as:", a: ["Abiotic", "Biotic", "Niche", "Trophic"], correct: 0, category: "Ecosystem Factors" },
+        { q: "In 'Canis lupus', 'Canis' represents the:", a: ["Genus", "Species", "Family", "Order"], correct: 0, category: "Taxonomy" },
+        { q: "An organism's ecological niche is best defined as:", a: ["Its address", "Its role/profession", "Its population size", "Its trophic level"], correct: 1, category: "Niches" },
+        { q: "Which is a biotic limiting factor for trout?", a: ["Low Oxygen", "Invasive Predator", "Water Speed", "Turbidity"], correct: 1, category: "Ecosystem Factors" },
+        { q: "Essential for natural selection to occur:", a: ["Stable environment", "Genetic variation", "Lack of competition", "Infinite resources"], correct: 1, category: "Evolution" },
+        { q: "Fossil record shows evidence of:", a: ["No change", "Sudden appearance", "Chronological progression", "No impact"], correct: 2, category: "Evolution" },
+        { q: "Which is a structural adaptation?", a: ["Hibernation", "Sharp talons", "Migration", "Ink release"], correct: 1, category: "Adaptations" },
+        { q: "Biogeography refers to:", a: ["Chemistry", "Geographic distribution", "Biomass", "Taxonomy"], correct: 1, category: "Taxonomy" },
+        { q: "Biological 'fitness' refers to:", a: ["Strength", "Survival & Reproduction", "Lifespan", "DNA choice"], correct: 1, category: "Evolution" },
+        { q: "Which is an adaptation from selection?", a: ["Learning", "Waxy coating over generations", "Muscle growth", "Winter fur color shift"], correct: 1, category: "Adaptations" },
+        { q: "Which abiotic factor is most stable in water?", a: ["Temperature", "Light", "Oxygen", "Nutrients"], correct: 0, category: "Ecosystem Factors" },
+        { q: "Vestigial structures suggest:", a: ["Vital functions", "Complexity", "Common ancestry", "Single mutations"], correct: 2, category: "Evolution" },
+        { q: "High richness but low population size describes:", a: ["Climax community", "Pioneer community", "Monoculture", "Desert"], correct: 0, category: "Community Dynamics" },
+        { q: "Lamarck failed to account for:", a: ["Environment", "Genetic inheritance", "Struggle", "Extinction"], correct: 1, category: "Evolution" },
+        { q: "Example of physiological adaptation:", a: ["Long neck", "Concentrated urine", "Hollow bones", "Web spinning"], correct: 1, category: "Adaptations" },
+        { q: "Difference between population and community:", a: ["Abiotic factors", "One species vs multiple", "Community is one species", "No difference"], correct: 1, category: "Organization" },
+        { q: "Fossil record with long stasis followed by sudden change is:", a: ["Punctuated Equilibrium", "Gradualism", "Lamarckism", "Artificial Selection"], correct: 0, category: "Evolution" },
+        { q: "Sewage dump impact on water:", a: ["BOD up, Oxygen down", "BOD down, Oxygen up", "Both up", "Both down"], correct: 0, category: "Water Quality" },
+        { q: "Highest number of common characteristics is in the same:", a: ["Species", "Genus", "Family", "Order"], correct: 0, category: "Taxonomy" },
+        { q: "Primary sources of variation:", a: ["Mutation/Sexual reproduction", "Asexual/Mitosis", "Exercise/Diet", "Learning"], correct: 0, category: "Evolution" },
+        { q: "Coexisting by eating at different times reduces:", a: ["Predation", "Niche overlap", "Success", "Stability"], correct: 1, category: "Niches" },
+        { q: "Comparative embryology shows:", a: ["Adults look same", "Similar development stages", "No selection", "Trait choice"], correct: 1, category: "Evolution" },
+        { q: "Abiotic difference in benthic vs limnetic zone:", a: ["Light", "Fish", "Decomposers", "Plants"], correct: 0, category: "Ecosystem Factors" },
+        { q: "Squirrels separated by a canyon becoming two species:", a: ["Allopatric speciation", "Sympatric speciation", "Artificial selection", "Vestigial evolution"], correct: 0, category: "Evolution" }
+    ];
+
+    let currentQ = 0;
+    let score = 0;
+    let mistakes = [];
+
+    const qText = document.getElementById('question-text');
+    const optionsBox = document.getElementById('options');
+    const feedbackBox = document.getElementById('feedback');
+    const nextBtn = document.getElementById('next-btn');
+    const progressFill = document.getElementById('progress-fill');
+
+    function loadQuestion() {
+        const data = quizData[currentQ];
+        qText.innerText = `${currentQ + 1}. ${data.q}`;
+        optionsBox.innerHTML = '';
+        feedbackBox.style.display = 'none';
+        nextBtn.style.display = 'none';
+        progressFill.style.width = `${(currentQ / 25) * 100}%`;
+
+        data.a.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.innerText = opt;
+            btn.className = 'option-btn';
+            btn.onclick = () => checkAnswer(index);
+            optionsBox.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selected) {
+        const data = quizData[currentQ];
+        const buttons = document.querySelectorAll('.option-btn');
+        
+        buttons.forEach(b => b.disabled = true);
+
+        if (selected === data.correct) {
+            buttons[selected].classList.add('correct');
+            feedbackBox.innerText = "Correct!";
+            feedbackBox.style.color = "var(--success)";
+            score++;
+        } else {
+            buttons[selected].classList.add('wrong');
+            buttons[data.correct].classList.add('correct');
+            feedbackBox.innerText = "Incorrect.";
+            feedbackBox.style.color = "var(--error)";
+            mistakes.push(data.category);
+        }
+
+        feedbackBox.style.display = 'block';
+        nextBtn.style.display = 'block';
+    }
+
+    nextBtn.onclick = () => {
+        currentQ++;
+        if (currentQ < quizData.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    };
+
+    function showResults() {
+        document.getElementById('question-view').style.display = 'none';
+        document.getElementById('results').style.display = 'block';
+        document.getElementById('score-val').innerText = score;
+        progressFill.style.width = '100%';
+
+        const analysis = document.getElementById('mistake-analysis');
+        const uniqueMistakes = [...new Set(mistakes)];
+        
+        if (uniqueMistakes.length === 0) {
+            analysis.innerHTML = "<li>Perfect score! No specific weak areas identified.</li>";
+            analysis.style.color = "var(--success)";
+        } else {
+            uniqueMistakes.forEach(m => {
+                const li = document.createElement('li');
+                li.innerText = `Review the concepts of: ${m}`;
+                analysis.appendChild(li);
+            });
+        }
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+</html>
